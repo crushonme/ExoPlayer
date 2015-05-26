@@ -53,6 +53,9 @@ import java.util.Locale;
         + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,as&ip=0.0.0.0&ipbits=0&"
         + "expire=19000000000&signature=7181C59D0252B285D593E1B61D985D5B7C98DE2A."
         + "5B445837F55A40E0F28AACAA047982E372D177E2&key=ik0", DemoUtil.TYPE_DASH),
+    new Sample("Feeling HEVC",
+            "http://www.dash-player.com/demo/streaming-server-and-encoder-support/?"
+            + "mpd=http://bitcdn-vix1.bitmovin.net/content/hevc/dashevc-live-2s.mpd",DemoUtil.TYPE_DASH),
   };
 
   public static final Sample[] YOUTUBE_DASH_WEBM = new Sample[] {
@@ -66,6 +69,9 @@ import java.util.Locale;
         + "as=fmp4_audio_clear,webm2_sd_hd_clear&sparams=ip,ipbits,expire,as&ip=0.0.0.0&ipbits=0&"
         + "expire=19000000000&signature=B752B262C6D7262EC4E4EB67901E5D8F7058A81D."
         + "C0358CE1E335417D9A8D88FF192F0D5D8F6DA1B6&key=ik0", DemoUtil.TYPE_DASH),
+    new Sample("Feelings VP9",
+        "http://yt-dash-mse-test.commondatastorage.googleapis.com/media/feelings_vp9-20130806-manifest.mpd"
+         , DemoUtil.TYPE_DASH),
   };
 
   public static final Sample[] SMOOTHSTREAMING = new Sample[] {

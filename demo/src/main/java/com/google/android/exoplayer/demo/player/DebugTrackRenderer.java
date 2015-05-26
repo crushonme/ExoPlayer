@@ -88,7 +88,7 @@ import android.widget.TextView;
 
   private String getQualityString() {
     Format format = videoSampleSource == null ? null : videoSampleSource.getFormat();
-    return format == null ? "null" : "height(" + format.height + "), itag(" + format.id + ")";
+    return format == null ? "null" : "fps(" + renderer.codecCounters.renderedOutputBufferCount *1000000/currentPositionUs + "), height(" + format.height + "), itag(" + format.id + ")";
   }
 
   @Override

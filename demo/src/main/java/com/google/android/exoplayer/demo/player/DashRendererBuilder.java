@@ -36,6 +36,7 @@ import com.google.android.exoplayer.dash.mpd.MediaPresentationDescriptionParser;
 import com.google.android.exoplayer.dash.mpd.Period;
 import com.google.android.exoplayer.dash.mpd.Representation;
 import com.google.android.exoplayer.demo.DemoUtil;
+import com.google.android.exoplayer.demo.PlayerActivity;
 import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
 import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilderCallback;
 import com.google.android.exoplayer.drm.DrmSessionManager;
@@ -200,17 +201,38 @@ public class DashRendererBuilder implements RendererBuilder,
       debugRenderer = null;
     } else {
       int[] videoRepresentationIndices = Util.toArray(videoRepresentationIndexList);
+      FormatEvaluator videoEvaluator;
       DataSource videoDataSource = new UriDataSource(userAgent, bandwidthMeter);
+
+      switch (player.getEvaluatorType()){
+        case DemoPlayer.EVALUATOR_FIXED:
+          System.out.printf("Dash manifest height %d\n",player.getHeight());
+          videoEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight()) ;
+          break;
+        case DemoPlayer.EVALUATOR_RANDOM:
+          videoEvaluator = new FormatEvaluator.RandomEvaluator() ;
+          break;
+        case DemoPlayer.EVALUATOR_ADAPTIVE:
+          videoEvaluator = new FormatEvaluator.AdaptiveEvaluator(bandwidthMeter) ;
+          break;
+        case DemoPlayer.EVALUATOR_LOOP:
+          videoEvaluator = new FormatEvaluator.LoopEvaluator() ;
+          break;
+        default:
+          videoEvaluator = new FormatEvaluator.AdaptiveEvaluator(bandwidthMeter) ;
+          break;
+      }
+
       ChunkSource videoChunkSource = new DashChunkSource(manifestFetcher, videoAdaptationSetIndex,
-          videoRepresentationIndices, videoDataSource, new AdaptiveEvaluator(bandwidthMeter),
-          LIVE_EDGE_LATENCY_MS);
+            videoRepresentationIndices, videoDataSource, videoEvaluator,
+            LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource videoSampleSource = new ChunkSampleSource(videoChunkSource, loadControl,
-          VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true, mainHandler, player,
-          DemoPlayer.TYPE_VIDEO);
+            VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true, mainHandler, player,
+            DemoPlayer.TYPE_VIDEO);
       videoRenderer = new MediaCodecVideoTrackRenderer(videoSampleSource, drmSessionManager, true,
-          MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, null, mainHandler, player, 50);
+            MediaCodec.VIDEO_SCALING_MODE_SCALE_TO_FIT, 5000, null, mainHandler, player, 50);
       debugRenderer = debugTextView != null
-          ? new DebugTrackRenderer(debugTextView, videoRenderer, videoSampleSource) : null;
+            ? new DebugTrackRenderer(debugTextView, videoRenderer, videoSampleSource) : null;
     }
 
     // Build the audio chunk sources.
@@ -219,7 +241,7 @@ public class DashRendererBuilder implements RendererBuilder,
     List<String> audioTrackNameList = new ArrayList<String>();
     if (audioAdaptationSet != null) {
       DataSource audioDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator();
+      FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
       List<Representation> audioRepresentations = audioAdaptationSet.representations;
       for (int i = 0; i < audioRepresentations.size(); i++) {
         Format format = audioRepresentations.get(i).format;
@@ -262,7 +284,7 @@ public class DashRendererBuilder implements RendererBuilder,
 
     // Build the text chunk sources.
     DataSource textDataSource = new UriDataSource(userAgent, bandwidthMeter);
-    FormatEvaluator textEvaluator = new FormatEvaluator.FixedEvaluator();
+    FormatEvaluator textEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
     List<ChunkSource> textChunkSourceList = new ArrayList<ChunkSource>();
     List<String> textTrackNameList = new ArrayList<String>();
     for (int i = 0; i < period.adaptationSets.size(); i++) {

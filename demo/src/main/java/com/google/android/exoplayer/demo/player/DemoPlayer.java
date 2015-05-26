@@ -161,6 +161,12 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
   public static final int TYPE_TIMED_METADATA = 3;
   public static final int TYPE_DEBUG = 4;
 
+  public static final int EVALUATOR_FIXED = 0;
+  public static final int EVALUATOR_RANDOM = 1;
+  public static final int EVALUATOR_ADAPTIVE = 2;
+  public static final int EVALUATOR_LOOP = 3;
+  public static final int EVALUATOR_UNKONWN = -1;
+
   private static final int RENDERER_BUILDING_STATE_IDLE = 1;
   private static final int RENDERER_BUILDING_STATE_BUILDING = 2;
   private static final int RENDERER_BUILDING_STATE_BUILT = 3;
@@ -189,6 +195,7 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
   private Id3MetadataListener id3MetadataListener;
   private InternalErrorListener internalErrorListener;
   private InfoListener infoListener;
+  private int mWidth = 0,mHeight = 0,mEvaluatorType =2,mDelayType = 0;
 
   public DemoPlayer(RendererBuilder rendererBuilder) {
     this.rendererBuilder = rendererBuilder;
@@ -202,6 +209,37 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
     selectedTracks = new int[RENDERER_COUNT];
     // Disable text initially.
     selectedTracks[TYPE_TEXT] = DISABLED_TRACK;
+  }
+  public void setHeight(int height){
+    mHeight = height;
+  }
+
+  public void setWidth(int width){
+    mWidth = width;
+  }
+
+  public void setEvaluatorType(int evaluatorType){
+    mEvaluatorType = evaluatorType;
+  }
+
+  public void setDelayType(int delayType) {
+    mDelayType = delayType;
+  }
+
+  public int getHeight(){
+    return mHeight;
+  }
+
+  public int getWidth(){
+    return mWidth;
+  }
+
+  public int getEvaluatorType(){
+    return mEvaluatorType;
+  }
+
+  public int getDelayType() {
+    return mDelayType;
   }
 
   public PlayerControl getPlayerControl() {

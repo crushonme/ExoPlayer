@@ -17,6 +17,7 @@ package com.google.android.exoplayer.demo;
 
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.VideoSurfaceView;
+import com.google.android.exoplayer.dash.mpd.Representation;
 import com.google.android.exoplayer.demo.player.DashRendererBuilder;
 import com.google.android.exoplayer.demo.player.DefaultRendererBuilder;
 import com.google.android.exoplayer.demo.player.DemoPlayer;
@@ -56,6 +57,7 @@ import android.widget.PopupMenu.OnMenuItemClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,6 +87,9 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private Button audioButton;
   private Button textButton;
   private Button retryButton;
+  private Button changeButton;
+  private Button evaluateButton;
+  private Button timeButton;
 
   private DemoPlayer player;
   private boolean playerNeedsPrepare;
@@ -95,6 +100,9 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private Uri contentUri;
   private int contentType;
   private String contentId;
+
+  private int resolution = 1;//defalt value
+  private int mWidth = 0,mHeight = 0,mEvaluatorType = 2,mDelayType = 0;
 
   // Activity lifecycle
 
@@ -138,7 +146,9 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     videoButton = (Button) findViewById(R.id.video_controls);
     audioButton = (Button) findViewById(R.id.audio_controls);
     textButton = (Button) findViewById(R.id.text_controls);
-
+    changeButton = (Button) findViewById(R.id.change_button);
+    evaluateButton = (Button) findViewById(R.id.evaluator_button);
+    timeButton = (Button) findViewById(R.id.time_button);
     DemoUtil.setDefaultCookieManager();
   }
 
@@ -200,6 +210,9 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private void preparePlayer() {
     if (player == null) {
       player = new DemoPlayer(getRendererBuilder());
+      player.setWidth(mWidth);
+      player.setHeight(mHeight);
+      player.setEvaluatorType(mEvaluatorType);
       player.addListener(this);
       player.setTextListener(this);
       player.setMetadataListener(this);
@@ -295,6 +308,8 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     videoButton.setVisibility(haveTracks(DemoPlayer.TYPE_VIDEO) ? View.VISIBLE : View.GONE);
     audioButton.setVisibility(haveTracks(DemoPlayer.TYPE_AUDIO) ? View.VISIBLE : View.GONE);
     textButton.setVisibility(haveTracks(DemoPlayer.TYPE_TEXT) ? View.VISIBLE : View.GONE);
+    evaluateButton.setVisibility((contentType == DemoUtil.TYPE_OTHER || contentType == DemoUtil.TYPE_HLS)? View.GONE:View.VISIBLE);
+    changeButton.setVisibility((contentType == DemoUtil.TYPE_OTHER || contentType == DemoUtil.TYPE_HLS)?  View.GONE:View.VISIBLE);
   }
 
   private boolean haveTracks(int type) {
@@ -328,6 +343,97 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     popup.show();
   }
 
+  public void showChangePopup(View v){
+      PopupMenu popup = new PopupMenu(this, v);
+      Menu menu = popup.getMenu();
+      menu.add(Menu.NONE, 0, Menu.NONE, R.string.original);
+      menu.add(Menu.NONE, 1, Menu.NONE, R.string.r240p);
+      menu.add(Menu.NONE, 2, Menu.NONE, R.string.r480p);
+      menu.add(Menu.NONE, 3, Menu.NONE, R.string.r720p);
+      menu.add(Menu.NONE, 4, Menu.NONE, R.string.r1080p);
+      menu.setGroupCheckable(Menu.NONE, true, true);
+      menu.findItem(resolution).setChecked(true);
+      popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+          //item.setChecked(true);
+
+          switch (resolution = item.getItemId()) {
+            case 0:
+              System.out.printf("Original resolution checked %dx%d\n", mWidth, mHeight);
+              break;
+            case 1:
+              mWidth = 640;
+              mHeight = 240;
+              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
+              break;
+            case 2:
+              mWidth = 854;
+              mHeight = 480;
+              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
+              break;
+            case 3:
+              mWidth = 1280;
+              mHeight = 720;
+              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
+              break;
+            case 4:
+              mWidth = 1920;
+              mHeight = 1080;
+              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
+              break;
+            default:
+              System.out.println("Get wrong Item");
+          }
+          releasePlayer();
+          preparePlayer();
+          return true;
+        }
+      });
+      popup.show();
+  }
+
+  public void showEvaluatorPopup(View v){
+    PopupMenu popup = new PopupMenu(this, v);
+    Menu menu = popup.getMenu();
+    menu.add(Menu.NONE, 0, Menu.NONE, R.string.fixed);
+    menu.add(Menu.NONE, 1, Menu.NONE, R.string.random);
+    menu.add(Menu.NONE, 2, Menu.NONE, R.string.adaptive);
+    menu.add(Menu.NONE, 3, Menu.NONE, R.string.loop);
+    menu.setGroupCheckable(Menu.NONE, true, true);
+    menu.findItem(mEvaluatorType).setChecked(true);
+    popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+        //item.setChecked(true);
+        mEvaluatorType = item.getItemId();
+        releasePlayer();
+        preparePlayer();
+        return true;
+      }
+    });
+    popup.show();
+  }
+
+  public void showtimePopup(View v){
+    PopupMenu popup = new PopupMenu(this, v);
+    Menu menu = popup.getMenu();
+    menu.add(Menu.NONE, 0, Menu.NONE, R.string.normal);
+    menu.add(Menu.NONE, 1, Menu.NONE, R.string.x3);
+    menu.setGroupCheckable(Menu.NONE, true, true);
+    menu.findItem(mDelayType).setChecked(true);
+    popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+      @Override
+      public boolean onMenuItemClick(MenuItem item) {
+        //item.setChecked(true);
+        mDelayType = item.getItemId();
+        releasePlayer();
+        preparePlayer();
+        return true;
+      }
+    });
+    popup.show();
+  }
   public void showTextPopup(View v) {
     PopupMenu popup = new PopupMenu(this, v);
     configurePopupWithTracks(popup, null, DemoPlayer.TYPE_TEXT);

@@ -103,6 +103,10 @@ public interface FormatEvaluator {
    */
   public static class FixedEvaluator implements FormatEvaluator {
 
+    private int mHeight;
+    public FixedEvaluator(int height){
+      this.mHeight = height;
+    }
     @Override
     public void enable() {
       // Do nothing.
@@ -116,9 +120,17 @@ public interface FormatEvaluator {
     @Override
     public void evaluate(List<? extends MediaChunk> queue, long playbackPositionUs,
         Format[] formats, Evaluation evaluation) {
-      evaluation.format = formats[0];
-    }
+      if (mHeight == 0)
+        evaluation.format = formats[formats.length-1];
+      else{
+        for (int i = 0; i < formats.length; i++) {
+          if (formats[i].height == mHeight) {
+            evaluation.format = formats[i];
+          }
+        }
+      }
 
+    }
   }
 
   /**
@@ -145,11 +157,48 @@ public interface FormatEvaluator {
     @Override
     public void evaluate(List<? extends MediaChunk> queue, long playbackPositionUs,
         Format[] formats, Evaluation evaluation) {
-      Format newFormat = formats[random.nextInt(formats.length)];
+      int i = random.nextInt(formats.length);
+      Format newFormat = formats[i];
       if (evaluation.format != null && !evaluation.format.id.equals(newFormat.id)) {
         evaluation.trigger = TRIGGER_ADAPTIVE;
       }
       evaluation.format = newFormat;
+      //System.out.printf("We will play Random resolution format[%d] [%d*%d]\n",i,formats[0].width,formats[0].height);
+    }
+
+  }
+
+  /**
+   * Selects  between the available formats.
+   */
+  public static class LoopEvaluator implements FormatEvaluator {
+
+    static int loop = 0,local_loop = 0;
+
+    @Override
+    public void enable() {
+        // Do nothing.
+    }
+
+    @Override
+    public void disable() {
+        // Do nothing.
+    }
+
+    @Override
+    public void evaluate(List<? extends MediaChunk> queue, long playbackPositionUs,
+                           Format[] formats, Evaluation evaluation) {
+      //System.out.printf("Every time we get in ,we will switch to another resolution. Format[%d --> ",formats.length - loop%formats.length -1);
+      ++local_loop ;
+      if(local_loop %3 == 0){
+        evaluation.format = formats[(formats.length - loop%formats.length -1)];
+        loop = (++loop )%formats.length;
+      }else {
+        evaluation.format = formats[(formats.length - loop%formats.length -1)];
+      }
+      //System.out.printf("%d] Current resolution.[%d*%d] And",formats.length - loop%formats.length -1,evaluation.format.width,evaluation.format.height);
+      //System.out.printf("we will change to [%d*%d]\n",formats[formats.length - loop%formats.length -1].width,formats[formats.length - loop%formats.length -1].height);
+
     }
 
   }
@@ -236,6 +285,7 @@ public interface FormatEvaluator {
           : queue.get(queue.size() - 1).endTimeUs - playbackPositionUs;
       Format current = evaluation.format;
       Format ideal = determineIdealFormat(formats, bandwidthMeter.getBitrateEstimate());
+      System.out.printf("ideal format is [%s] [%d*%d].\n",ideal.id,ideal.width,ideal.height);
       boolean isHigher = ideal != null && current != null && ideal.bitrate > current.bitrate;
       boolean isLower = ideal != null && current != null && ideal.bitrate < current.bitrate;
       if (isHigher) {
@@ -269,6 +319,8 @@ public interface FormatEvaluator {
       }
       if (current != null && ideal != current) {
         evaluation.trigger = FormatEvaluator.TRIGGER_ADAPTIVE;
+        //System.out.printf("We evaluator the bitrate here.\n");
+        //System.out.printf("Current format is [%s] [%d*%d].\n",current.id,current.width,current.height);
       }
       evaluation.format = ideal;
     }
@@ -279,6 +331,7 @@ public interface FormatEvaluator {
     protected Format determineIdealFormat(Format[] formats, long bitrateEstimate) {
       long effectiveBitrate = computeEffectiveBitrateEstimate(bitrateEstimate);
       for (int i = 0; i < formats.length; i++) {
+        System.out.printf("format[%d] is [%s] [%d*%d].\n",i,formats[i].id,formats[i].width,formats[i].height);
         Format format = formats[i];
         if (format.bitrate <= effectiveBitrate) {
           return format;

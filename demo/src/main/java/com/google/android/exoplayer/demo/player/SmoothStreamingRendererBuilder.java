@@ -27,6 +27,7 @@ import com.google.android.exoplayer.chunk.ChunkSource;
 import com.google.android.exoplayer.chunk.FormatEvaluator;
 import com.google.android.exoplayer.chunk.FormatEvaluator.AdaptiveEvaluator;
 import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
+import com.google.android.exoplayer.demo.PlayerActivity;
 import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilder;
 import com.google.android.exoplayer.demo.player.DemoPlayer.RendererBuilderCallback;
 import com.google.android.exoplayer.drm.DrmSessionManager;
@@ -166,9 +167,27 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
     } else {
       int[] videoTrackIndices = Util.toArray(videoTrackIndexList);
       DataSource videoDataSource = new UriDataSource(userAgent, bandwidthMeter);
+      FormatEvaluator videoEvaluator;
+      switch (player.getEvaluatorType()){
+        case DemoPlayer.EVALUATOR_FIXED:
+          videoEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight()) ;
+          break;
+        case DemoPlayer.EVALUATOR_RANDOM:
+          videoEvaluator = new FormatEvaluator.RandomEvaluator() ;
+          break;
+        case DemoPlayer.EVALUATOR_ADAPTIVE:
+          videoEvaluator = new FormatEvaluator.AdaptiveEvaluator(bandwidthMeter) ;
+          break;
+        case DemoPlayer.EVALUATOR_LOOP:
+          videoEvaluator = new FormatEvaluator.LoopEvaluator() ;
+          break;
+        default:
+        videoEvaluator = new FormatEvaluator.AdaptiveEvaluator(bandwidthMeter) ;
+        break;
+      }
       ChunkSource videoChunkSource = new SmoothStreamingChunkSource(manifestFetcher,
           videoStreamElementIndex, videoTrackIndices, videoDataSource,
-          new AdaptiveEvaluator(bandwidthMeter), LIVE_EDGE_LATENCY_MS);
+              videoEvaluator, LIVE_EDGE_LATENCY_MS);
       ChunkSampleSource videoSampleSource = new ChunkSampleSource(videoChunkSource, loadControl,
           VIDEO_BUFFER_SEGMENTS * BUFFER_SEGMENT_SIZE, true, mainHandler, player,
           DemoPlayer.TYPE_VIDEO);
@@ -191,7 +210,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
       audioTrackNames = new String[audioStreamElementCount];
       ChunkSource[] audioChunkSources = new ChunkSource[audioStreamElementCount];
       DataSource audioDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator audioFormatEvaluator = new FormatEvaluator.FixedEvaluator();
+      FormatEvaluator audioFormatEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
       audioStreamElementCount = 0;
       for (int i = 0; i < manifest.streamElements.length; i++) {
         if (manifest.streamElements[i].type == StreamElement.TYPE_AUDIO) {
@@ -222,7 +241,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
       textTrackNames = new String[textStreamElementCount];
       ChunkSource[] textChunkSources = new ChunkSource[textStreamElementCount];
       DataSource ttmlDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator ttmlFormatEvaluator = new FormatEvaluator.FixedEvaluator();
+      FormatEvaluator ttmlFormatEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
       textStreamElementCount = 0;
       for (int i = 0; i < manifest.streamElements.length; i++) {
         if (manifest.streamElements[i].type == StreamElement.TYPE_TEXT) {

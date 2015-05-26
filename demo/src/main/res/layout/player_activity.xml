@@ -97,6 +97,28 @@
           android:text="@string/logging"
           style="@style/DemoButton"
           android:onClick="showVerboseLogPopup"/>
+      <Button android:id="@+id/evaluator_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="E"
+          style="@style/DemoButton"
+          android:visibility="gone"
+          android:onClick="showEvaluatorPopup"/>
+      <Button android:id="@+id/change_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="R"
+          style="@style/DemoButton"
+          android:visibility="gone"
+          android:onClick="showChangePopup"/>
+
+      <Button android:id="@+id/time_button"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="T"
+          style="@style/DemoButton"
+          android:visibility="gone"
+          android:onClick="showtimePopup"/>
 
       <Button android:id="@+id/retry_button"
           android:layout_width="wrap_content"
