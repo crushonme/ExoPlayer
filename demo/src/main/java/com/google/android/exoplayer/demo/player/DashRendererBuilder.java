@@ -241,7 +241,7 @@ public class DashRendererBuilder implements RendererBuilder,
     List<String> audioTrackNameList = new ArrayList<String>();
     if (audioAdaptationSet != null) {
       DataSource audioDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
+      FormatEvaluator audioEvaluator = new FormatEvaluator.FixedEvaluator(0);
       List<Representation> audioRepresentations = audioAdaptationSet.representations;
       for (int i = 0; i < audioRepresentations.size(); i++) {
         Format format = audioRepresentations.get(i).format;
@@ -284,7 +284,7 @@ public class DashRendererBuilder implements RendererBuilder,
 
     // Build the text chunk sources.
     DataSource textDataSource = new UriDataSource(userAgent, bandwidthMeter);
-    FormatEvaluator textEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
+    FormatEvaluator textEvaluator = new FormatEvaluator.FixedEvaluator(0);
     List<ChunkSource> textChunkSourceList = new ArrayList<ChunkSource>();
     List<String> textTrackNameList = new ArrayList<String>();
     for (int i = 0; i < period.adaptationSets.size(); i++) {

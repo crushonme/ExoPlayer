@@ -356,8 +356,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
       popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          //item.setChecked(true);
-
           switch (resolution = item.getItemId()) {
             case 0:
               System.out.printf("Original resolution checked %dx%d\n", mWidth, mHeight);
@@ -405,7 +403,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        //item.setChecked(true);
         mEvaluatorType = item.getItemId();
         releasePlayer();
         preparePlayer();
@@ -425,7 +422,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
       @Override
       public boolean onMenuItemClick(MenuItem item) {
-        //item.setChecked(true);
         mDelayType = item.getItemId();
         releasePlayer();
         preparePlayer();

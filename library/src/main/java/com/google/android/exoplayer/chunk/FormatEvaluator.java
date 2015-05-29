@@ -169,7 +169,7 @@ public interface FormatEvaluator {
   }
 
   /**
-   * Selects  between the available formats.
+   * Selects circularly between the available formats.
    */
   public static class LoopEvaluator implements FormatEvaluator {
 

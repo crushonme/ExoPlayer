@@ -210,7 +210,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
       audioTrackNames = new String[audioStreamElementCount];
       ChunkSource[] audioChunkSources = new ChunkSource[audioStreamElementCount];
       DataSource audioDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator audioFormatEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
+      FormatEvaluator audioFormatEvaluator = new FormatEvaluator.FixedEvaluator(0);
       audioStreamElementCount = 0;
       for (int i = 0; i < manifest.streamElements.length; i++) {
         if (manifest.streamElements[i].type == StreamElement.TYPE_AUDIO) {
@@ -241,7 +241,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
       textTrackNames = new String[textStreamElementCount];
       ChunkSource[] textChunkSources = new ChunkSource[textStreamElementCount];
       DataSource ttmlDataSource = new UriDataSource(userAgent, bandwidthMeter);
-      FormatEvaluator ttmlFormatEvaluator = new FormatEvaluator.FixedEvaluator(player.getHeight());
+      FormatEvaluator ttmlFormatEvaluator = new FormatEvaluator.FixedEvaluator(0);
       textStreamElementCount = 0;
       for (int i = 0; i < manifest.streamElements.length; i++) {
         if (manifest.streamElements[i].type == StreamElement.TYPE_TEXT) {
