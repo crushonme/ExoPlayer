@@ -21,10 +21,13 @@ import com.google.android.exoplayer.demo.Samples.Sample;
 import com.google.android.exoplayer.util.MimeTypes;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,13 +38,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * An activity for selecting from a number of samples.
  */
 public class SampleChooserActivity extends Activity {
 
   private static final String TAG = "SampleChooserActivity";
-
+  private ArrayList<VideoInfo> VideoList = new ArrayList<VideoInfo>();
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,6 +55,17 @@ public class SampleChooserActivity extends Activity {
 
     ListView sampleList = (ListView) findViewById(R.id.sample_list);
     final SampleAdapter sampleAdapter = new SampleAdapter(this);
+
+    initLocal();
+    Samples.Sample[] localSample = new Samples.Sample[VideoList.size()];
+    Iterator<VideoInfo> iterator =  VideoList.iterator();
+    int i =0;
+    while (iterator.hasNext()){
+      VideoInfo localinfo = iterator.next();
+      localSample[i++] = new Samples.Sample(localinfo.title,"file:///" + localinfo.filePath,DemoUtil.TYPE_OTHER);
+    }
+    sampleAdapter.add(new Header("Local files"));
+    sampleAdapter.addAll((Object[]) localSample);
 
     sampleAdapter.add(new Header("YouTube DASH"));
     sampleAdapter.addAll((Object[]) Samples.YOUTUBE_DASH_MP4);
@@ -138,4 +155,53 @@ public class SampleChooserActivity extends Activity {
 
   }
 
+  private void initLocal(){
+    String[] thumbColumns = new String[]{
+            MediaStore.Video.Thumbnails.DATA,
+            MediaStore.Video.Thumbnails.VIDEO_ID
+    };
+
+    String[] mediaColumn = new String[]{
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.TITLE,
+            MediaStore.Video.Media.MIME_TYPE
+    };
+
+    ContentResolver contentResolver = this.getContentResolver();
+    Cursor cursor = contentResolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI,mediaColumn,null,null,MediaStore.Video.Media.DEFAULT_SORT_ORDER);
+
+    if(cursor.moveToFirst()){
+      do{
+        VideoInfo info = new VideoInfo();
+
+        info.filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
+        info.mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
+        info.title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
+
+        int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
+        String selection = MediaStore.Video.Thumbnails.VIDEO_ID + "=?";
+        String[] selectionArgs = new String[]{
+                id+""
+        };
+        Cursor thumbCursor = contentResolver.query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI,thumbColumns,selection,selectionArgs,null);
+
+        if(thumbCursor.moveToFirst()){
+          info.thumbPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
+        }
+
+        VideoList.add(info);
+        System.out.printf("local media: %s\n", info.title);
+      }while(cursor.moveToNext());
+
+    }
+    System.out.println("local media file init");
+  }
+
+  static class VideoInfo{
+    String filePath;
+    String mimeType;
+    String thumbPath;
+    String title;
+  }
 }

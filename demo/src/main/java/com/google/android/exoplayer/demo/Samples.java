@@ -45,9 +45,9 @@ import java.util.Locale;
   public static final Sample[] YOUTUBE_DASH_MP4 = new Sample[] {
     new Sample("Google Glass",
         "http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?"
-        + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&"
-        + "ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7."
-        + "8506521BFC350652163895D4C26DEE124209AA9E&key=ik0", DemoUtil.TYPE_DASH),
+        + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,as&ip=0.0.0.0&"
+        + "ipbits=0&expire=19000000000&signature=255F6B3C07C753C88708C07EA31B7A1A10703C8D."
+        + "2D6A28B21F921D0B245CDCF36F7EB54A2B5ABFC2&key=ik0", DemoUtil.TYPE_DASH),
     new Sample("Google Play",
         "http://www.youtube.com/api/manifest/dash/id/3aa39fa2cc27967f/source/youtube?"
         + "as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,as&ip=0.0.0.0&ipbits=0&"
