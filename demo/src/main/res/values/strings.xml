@@ -51,16 +51,6 @@
 
   <string name="streaming">Streaming Playback</string>
 
-  <string name="original">original</string>
-
-  <string name="r240p">640x240</string>
-
-  <string name="r480p">854x480</string>
-
-  <string name="r720p">1280x720</string>
-
-  <string name="r1080p">1920x1080</string>
-
   <string name="fixed">fixed</string>
 
   <string name="random">random</string>

@@ -89,6 +89,7 @@ public class DashRendererBuilder implements RendererBuilder,
   private final String contentId;
   private final MediaDrmCallback drmCallback;
   private final TextView debugTextView;
+  private final ArrayList<Format> targetFormats = new ArrayList<>();
 
   private DemoPlayer player;
   private RendererBuilderCallback callback;
@@ -189,9 +190,11 @@ public class DashRendererBuilder implements RendererBuilder,
           // Filtering unsupported mime type
         } else {
           videoRepresentationIndexList.add(i);
+          targetFormats.add(format);
         }
       }
     }
+    player.setTargetFormats(targetFormats);
 
     // Build the video renderer.
     final MediaCodecVideoTrackRenderer videoRenderer;

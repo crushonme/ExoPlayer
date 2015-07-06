@@ -23,6 +23,8 @@ import com.google.android.exoplayer.chunk.Format;
 
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 /**
  * A {@link TrackRenderer} that periodically updates debugging information displayed by a
  * {@link TextView}.
@@ -35,6 +37,10 @@ import android.widget.TextView;
 
   private volatile boolean pendingFailure;
   private volatile long currentPositionUs;
+
+  private volatile long deltUs;
+  private int deltRenderedCount,oldRenderedCount;
+  private String fps;
 
   public DebugTrackRenderer(TextView textView, MediaCodecTrackRenderer renderer) {
     this(textView, renderer, null);
@@ -71,7 +77,10 @@ import android.widget.TextView;
   protected void doSomeWork(long positionUs, long elapsedRealtimeUs) throws ExoPlaybackException {
     maybeFail();
     if (positionUs < currentPositionUs || positionUs > currentPositionUs + 1000000) {
+      deltUs = positionUs - currentPositionUs;
+      deltRenderedCount = renderer.codecCounters.renderedOutputBufferCount - oldRenderedCount;
       currentPositionUs = positionUs;
+      oldRenderedCount = renderer.codecCounters.renderedOutputBufferCount;
       textView.post(this);
     }
   }
@@ -88,7 +97,10 @@ import android.widget.TextView;
 
   private String getQualityString() {
     Format format = videoSampleSource == null ? null : videoSampleSource.getFormat();
-    return format == null ? "null" : "fps(" + renderer.codecCounters.renderedOutputBufferCount *1000000/currentPositionUs + "), height(" + format.height + "), itag(" + format.id + ")";
+    DecimalFormat df = new DecimalFormat("0.00");
+    if(deltRenderedCount > 0)
+      fps = df.format((float)deltRenderedCount/(float)deltUs);
+    return format == null ? "null" : "fps(" + fps + "), height(" + format.height + "), itag(" + format.id + ")";
   }
 
   @Override

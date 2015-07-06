@@ -309,7 +309,7 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     audioButton.setVisibility(haveTracks(DemoPlayer.TYPE_AUDIO) ? View.VISIBLE : View.GONE);
     textButton.setVisibility(haveTracks(DemoPlayer.TYPE_TEXT) ? View.VISIBLE : View.GONE);
     evaluateButton.setVisibility((contentType == DemoUtil.TYPE_OTHER || contentType == DemoUtil.TYPE_HLS)? View.GONE:View.VISIBLE);
-    changeButton.setVisibility((contentType == DemoUtil.TYPE_OTHER || contentType == DemoUtil.TYPE_HLS)?  View.GONE:View.VISIBLE);
+    changeButton.setVisibility(mEvaluatorType == 0?  View.VISIBLE:View.GONE);
   }
 
   private boolean haveTracks(int type) {
@@ -346,43 +346,18 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   public void showChangePopup(View v){
       PopupMenu popup = new PopupMenu(this, v);
       Menu menu = popup.getMenu();
-      menu.add(Menu.NONE, 0, Menu.NONE, R.string.original);
-      menu.add(Menu.NONE, 1, Menu.NONE, R.string.r240p);
-      menu.add(Menu.NONE, 2, Menu.NONE, R.string.r480p);
-      menu.add(Menu.NONE, 3, Menu.NONE, R.string.r720p);
-      menu.add(Menu.NONE, 4, Menu.NONE, R.string.r1080p);
+      for (int i=0; i < player.getTargetFormats().size();i++)
+      {
+        menu.add(Menu.NONE, i ,Menu.NONE,player.getTargetFormats().get(i).id);
+      }
       menu.setGroupCheckable(Menu.NONE, true, true);
       menu.findItem(resolution).setChecked(true);
       popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-          switch (resolution = item.getItemId()) {
-            case 0:
-              System.out.printf("Original resolution checked %dx%d\n", mWidth, mHeight);
-              break;
-            case 1:
-              mWidth = 640;
-              mHeight = 240;
-              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
-              break;
-            case 2:
-              mWidth = 854;
-              mHeight = 480;
-              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
-              break;
-            case 3:
-              mWidth = 1280;
-              mHeight = 720;
-              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
-              break;
-            case 4:
-              mWidth = 1920;
-              mHeight = 1080;
-              System.out.printf("Force to change resolution :%dx%d\n", mWidth, mHeight);
-              break;
-            default:
-              System.out.println("Get wrong Item");
-          }
+          resolution = item.getItemId();
+          mWidth = player.getTargetFormats().get(resolution).width;
+          mHeight = player.getTargetFormats().get(resolution).height;
           releasePlayer();
           preparePlayer();
           return true;

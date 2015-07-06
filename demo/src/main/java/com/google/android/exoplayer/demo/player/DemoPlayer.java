@@ -24,6 +24,7 @@ import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.audio.AudioTrack;
 import com.google.android.exoplayer.chunk.ChunkSampleSource;
+import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
 import com.google.android.exoplayer.drm.StreamingDrmSessionManager;
 import com.google.android.exoplayer.metadata.MetadataTrackRenderer;
@@ -37,6 +38,7 @@ import android.os.Looper;
 import android.view.Surface;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -196,6 +198,7 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
   private InternalErrorListener internalErrorListener;
   private InfoListener infoListener;
   private int mWidth = 0,mHeight = 0,mEvaluatorType =2,mDelayType = 0;
+  private ArrayList<Format> mTargetFormats = new ArrayList<>();
 
   public DemoPlayer(RendererBuilder rendererBuilder) {
     this.rendererBuilder = rendererBuilder;
@@ -226,6 +229,10 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
     mDelayType = delayType;
   }
 
+  public void setTargetFormats(ArrayList<Format> targetFormats){
+    mTargetFormats = targetFormats;
+  }
+
   public int getHeight(){
     return mHeight;
   }
@@ -242,6 +249,9 @@ public class DemoPlayer implements ExoPlayer.Listener, ChunkSampleSource.EventLi
     return mDelayType;
   }
 
+  public ArrayList<Format> getTargetFormats(){
+    return mTargetFormats;
+  }
   public PlayerControl getPlayerControl() {
     return playerControl;
   }
