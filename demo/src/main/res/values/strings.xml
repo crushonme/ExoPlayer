@@ -47,9 +47,9 @@
 
   <string name="failed">Playback failed</string>
 
-  <string name="local">Local Playback</string>
+  <!--string name="local">Local Playback</string>
 
-  <string name="streaming">Streaming Playback</string>
+  <string name="streaming">Streaming Playback</string-->
 
   <string name="fixed">fixed</string>
 
@@ -59,7 +59,7 @@
 
   <string name="loop">loop</string>
 
-  <string name="normal">normal</string>
+  <!--string name="normal">normal</string>
 
-  <string name="x3">multiply 3</string>
+  <string name="x3">multiply 3</string-->
 </resources>

@@ -111,15 +111,6 @@
           style="@style/DemoButton"
           android:visibility="gone"
           android:onClick="showChangePopup"/>
-
-      <Button android:id="@+id/time_button"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="T"
-          style="@style/DemoButton"
-          android:visibility="gone"
-          android:onClick="showtimePopup"/>
-
       <Button android:id="@+id/retry_button"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"

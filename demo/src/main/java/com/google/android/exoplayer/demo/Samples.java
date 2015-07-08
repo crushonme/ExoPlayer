@@ -42,6 +42,8 @@ import java.util.Locale;
 
   }
 
+  final static private String lan_server = "http://192.168.2.101:80/";
+
   public static final Sample[] YOUTUBE_DASH_MP4 = new Sample[] {
     new Sample("Google Glass",
         "http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?"
@@ -141,6 +143,62 @@ import java.util.Locale;
         DemoUtil.TYPE_OTHER),
   };
 
+  public static final Sample[] LAN_SERVER = new Sample[] {
+    new Sample("Sintel_2010", lan_server + "Sintel_2010/Sintel_2010.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("battlefield", lan_server + "battlefield/battlefield.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("Redbull Formula", lan_server + "redbull/Manifest.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("Elephant", lan_server + "Elephant/Elephant.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("Big_Buck_Bunny", lan_server + "Big_Buck_Bunny/Big_Buck_Bunny.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("testcard", lan_server + "testcard/testcard.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("Car", lan_server + "car/car-20120827-manifest.mpd",
+        DemoUtil.TYPE_DASH),
+    //new Sample("Car Cenc", lan_server + "car_cenc/car_cenc-20120827-manifest.mpd",
+      //  DemoUtil.TYPE_DASH),
+    //new Sample("Car Cenc video only", lan_server + "car_cenc/car_cenc-20120827-manifest_vidonly.mpd",
+      //  DemoUtil.TYPE_DASH),
+
+    new Sample("Motion", lan_server + "motion/motion-20120802-manifest.mpd",
+        DemoUtil.TYPE_DASH),
+    new Sample("Oops", lan_server + "oops/oops-20120802-manifest.mpd",
+        DemoUtil.TYPE_DASH),
+
+    //new Sample("Oops Cenc", lan_server + "oops_cenc/oops_cenc-20121114-manifest.mpd",
+      //  DemoUtil.TYPE_DASH),
+    //new Sample("Youtube URL test only", "https://www.youtube.com/watch?v=Zk9J5xnTVMA",
+      //  DemoUtil.TYPE_DASH),
+    //new Sample("Sintel trailer 2k", lan_server + "sintel_trailer-max-2048x1080/sintel.mpd",
+      //    DemoUtil.TYPE_DASH),
+    //new Sample("Sintel trailer 4k", lan_server + "sintel_trailer-max-3840x2160/sintel.mpd",
+      //    DemoUtil.TYPE_DASH),
+    //new Sample("Time Scape 2k", lan_server + "TimeScapes_2560x1440/TimeScapes.mpd",
+      //    DemoUtil.TYPE_DASH),
+    //new Sample("Time Scape 4k", lan_server + "TimeScapes_4096x2304/TimeScapes.mpd",
+      //    DemoUtil.TYPE_DASH),
+    new Sample("4k interstellar", lan_server + "4k_interstellar/interstellar.mpd",
+          DemoUtil.TYPE_DASH),
+
+
+    new Sample("Sintel-seglist", lan_server + "sintel-seglist/sintel-seglist.mpd",
+          DemoUtil.TYPE_DASH),
+    //new Sample("Sintel-seglist-full", lan_server + "sintel-seglist/sintel-seglist-full.mpd",
+          //DemoUtil.TYPE_DASH),
+    new Sample("TOS", lan_server + "TOS/playlist.mpd",
+          DemoUtil.TYPE_DASH),
+    new Sample("Feelings vp9", lan_server + "feeling_vp9/feelings_vp9-20130806-manifest.mpd",
+          DemoUtil.TYPE_DASH),
+    new Sample("Google Glass", lan_server + "google_glass/google_glass.mpd",
+          DemoUtil.TYPE_DASH),
+    new Sample("Google Play", lan_server + "google_play/google_play.mpd",
+          DemoUtil.TYPE_DASH),
+    new Sample("Test for local mp4",lan_server + "test.mp4",
+          DemoUtil.TYPE_OTHER),
+    };
   private Samples() {}
 
 }

@@ -24,6 +24,7 @@ import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.TrackRenderer;
 import com.google.android.exoplayer.chunk.ChunkSampleSource;
 import com.google.android.exoplayer.chunk.ChunkSource;
+import com.google.android.exoplayer.chunk.Format;
 import com.google.android.exoplayer.chunk.FormatEvaluator;
 import com.google.android.exoplayer.chunk.FormatEvaluator.AdaptiveEvaluator;
 import com.google.android.exoplayer.chunk.MultiTrackChunkSource;
@@ -74,7 +75,7 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
   private final String contentId;
   private final MediaDrmCallback drmCallback;
   private final TextView debugTextView;
-
+  private final ArrayList<Format> targetFormats = new ArrayList<>();
   private DemoPlayer player;
   private RendererBuilderCallback callback;
   private ManifestFetcher<SmoothStreamingManifest> manifestFetcher;
@@ -151,10 +152,15 @@ public class SmoothStreamingRendererBuilder implements RendererBuilder,
           TrackElement trackElement = streamElement.tracks[j];
           if (trackElement.maxWidth * trackElement.maxHeight <= maxDecodableFrameSize) {
             videoTrackIndexList.add(j);
+            Format format = new Format(String.valueOf(j), trackElement.mimeType,
+                    trackElement.maxWidth, trackElement.maxHeight, trackElement.numChannels,
+                    trackElement.sampleRate, trackElement.bitrate);
+            targetFormats.add(format);
           } else {
             // The device isn't capable of playing this stream.
           }
         }
+        player.setTargetFormats(targetFormats);
       }
     }
 

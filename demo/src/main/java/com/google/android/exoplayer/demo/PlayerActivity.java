@@ -101,8 +101,8 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
   private int contentType;
   private String contentId;
 
-  private int resolution = 1;//defalt value
-  private int mWidth = 0,mHeight = 0,mEvaluatorType = 2,mDelayType = 0;
+  private int resolution = 0;//defalt value
+  private int mWidth = 0,mHeight = 0,mEvaluatorType = 2;
 
   // Activity lifecycle
 
@@ -148,7 +148,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     textButton = (Button) findViewById(R.id.text_controls);
     changeButton = (Button) findViewById(R.id.change_button);
     evaluateButton = (Button) findViewById(R.id.evaluator_button);
-    timeButton = (Button) findViewById(R.id.time_button);
     DemoUtil.setDefaultCookieManager();
   }
 
@@ -387,24 +386,6 @@ public class PlayerActivity extends Activity implements SurfaceHolder.Callback, 
     popup.show();
   }
 
-  public void showtimePopup(View v){
-    PopupMenu popup = new PopupMenu(this, v);
-    Menu menu = popup.getMenu();
-    menu.add(Menu.NONE, 0, Menu.NONE, R.string.normal);
-    menu.add(Menu.NONE, 1, Menu.NONE, R.string.x3);
-    menu.setGroupCheckable(Menu.NONE, true, true);
-    menu.findItem(mDelayType).setChecked(true);
-    popup.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-      @Override
-      public boolean onMenuItemClick(MenuItem item) {
-        mDelayType = item.getItemId();
-        releasePlayer();
-        preparePlayer();
-        return true;
-      }
-    });
-    popup.show();
-  }
   public void showTextPopup(View v) {
     PopupMenu popup = new PopupMenu(this, v);
     configurePopupWithTracks(popup, null, DemoPlayer.TYPE_TEXT);
